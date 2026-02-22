@@ -1,12 +1,15 @@
 import fs from "fs";
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const pdfParse = require("pdf-parse");
+
 const extractTextFromPDF = async (filePath) => {
   try {
-    const pdfParse = (await import("pdf-parse")).default;
     const dataBuffer = fs.readFileSync(filePath);
     const data = await pdfParse(dataBuffer);
     return data.text;
   } catch (error) {
-    console.error(error);
+    console.error("PDF Parse Error:", error);
     throw error;
   }
 };

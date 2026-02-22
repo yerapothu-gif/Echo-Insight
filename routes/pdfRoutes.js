@@ -1,6 +1,6 @@
 import express from "express";
 import multer from "multer";
-import { uploadPDF } from "../controllers/pdfController.js";
+import { uploadPDF, getPapers } from "../controllers/pdfController.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import protect from "../middleware/authMiddleware.js";
@@ -14,10 +14,17 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
 });
 
-const upload = multer({ storage, fileFilter: (req, file, cb) => {
-  if (file.mimetype !== "application/pdf") return cb(new Error("Only PDF files allowed"), false);
-  cb(null, true);
-}});
+const upload = multer({ 
+  storage, 
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype !== "application/pdf") {
+      return cb(new Error("Only PDF files allowed"), false);
+    }
+    cb(null, true);
+  }
+});
 
 router.post("/upload", protect, upload.single("pdf"), uploadPDF);
+router.get("/papers", protect, getPapers);
+
 export default router;
